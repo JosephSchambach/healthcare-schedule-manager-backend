@@ -22,3 +22,6 @@ Healthcare Appointment Management System (Full-Stack)
         Docker containers for the project’s microservices.
 
     Stretch goal: Implement machine learning to predict no-shows or optimal appointment times.
+
+Link to Miro project board: https://miro.com/app/board/uXjVLhpo6Rs=/?moveToWidget=3458764623138792242&cot=14
+Link to Miro architecture board: https://miro.com/app/board/uXjVLhpo6Rs=/?moveToWidget=3458764619324992789&cot=14
