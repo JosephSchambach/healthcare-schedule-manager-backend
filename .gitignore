@@ -1,0 +1,3 @@
+*.pyc
+context_config.json
+*test.py
