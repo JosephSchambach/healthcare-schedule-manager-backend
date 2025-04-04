@@ -1,0 +1,13 @@
+{
+    "context": "HSM",
+    "env": "prod",
+    "secrets": {
+        "database": {
+            "supabase": {
+                "supabase_url": "https://xixoeszuqpjgkbuyrsgu.supabase.co",
+                "supabase_key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpeG9lc3p1cXBqZ2tidXlyc2d1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM3NjEyMTksImV4cCI6MjA1OTMzNzIxOX0.oyu7dJdurZxNSOfJeoNGnoaaDOdduoqphXO2EUUcOoQ",
+                "supabase_service_role": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhpeG9lc3p1cXBqZ2tidXlyc2d1Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0Mzc2MTIxOSwiZXhwIjoyMDU5MzM3MjE5fQ.-6lgSb2Fvq5wmgB3UznZw6M-fG7dO2Mtu2aYEylV6Ss"
+            }
+        }
+    }
+}
