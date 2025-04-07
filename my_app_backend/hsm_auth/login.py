@@ -1,7 +1,11 @@
 import base64
 import pandas as pd
 
-class Auth:
+class LoginHandler:
+    def __init__(self, logger, database):
+        self.logger = logger
+        self.database = database
+
     def _decode_auth(self):
         try:
             self.__decoded_auth = base64.b64decode(self.__auth).decode('utf-8')
@@ -22,3 +26,16 @@ class Auth:
         self.__auth = auth
         self._decode_auth()
         return self._authenticate()
+    
+    def create(self, user_model):
+        self.logger.log("Creating user authentication record")
+        try:
+            self.database.insert(
+                f"insert into user_authentication_table (username, password, role) values ('%s', '%s', '%s')", 
+                (user_model.username, user_model.password, user_model.role)
+            )
+            self.logger.log("User authentication record created successfully")
+            return True, "User authentication record created successfully"
+        except Exception as e:
+            self.logger.log(f"Failed to create user authentication record: {e}", level='error')
+            return False, "Failed to create user authentication record"
