@@ -1,9 +1,9 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 class DoctorContactInfo(BaseModel):
     phone_number: Optional[str] = None
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     address: Optional[str] = None
     city: Optional[str] = None
     state: Optional[str] = None
@@ -29,3 +29,4 @@ class Doctor(BaseModel):
 class DoctorLogin(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
+    role = "doctor"

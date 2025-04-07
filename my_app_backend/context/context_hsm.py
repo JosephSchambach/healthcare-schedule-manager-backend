@@ -1,18 +1,20 @@
-from hsm_auth.authorizor import Auth
+from hsm_auth.login import LoginHandler
 from hsm_auth.session_manager import SessionManager
 from hsm_database.database_config import DataBaseConfig
+from context.hsm_logging_context import LoggingContext
 import json
 
 class ContextHSM:
     def __init__(self):
-        self.authenticator = Auth()
+        self.logger = LoggingContext()
         self.get_session_manager()
         self.get_context()
         self.get_secrets()
         self.get_database()
+        self.login = LoginHandler(self.logger, self.database)
 
     def get_context(self):
-        with open('my_app_backend/context/config.json') as json_file:
+        with open('context_config.json') as json_file:
             data = json.load(json_file)
             if data["context"] == "HSM": 
                 self.context = data
@@ -31,7 +33,7 @@ class ContextHSM:
     def get_database(self):
         database = self.secrets.get("database")
         if database:
-            self.database = DataBaseConfig(database)
+            self.database = DataBaseConfig(self.logger, database)
         else:
             raise ValueError("Database not found in secrets configuration")
 

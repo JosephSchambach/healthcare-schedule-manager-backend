@@ -11,14 +11,10 @@ class PatientContactInfo(BaseModel):
     zip_code: Optional[str] = None
     country: Optional[str] = None
 
-_patient_contact_info = PatientContactInfo
-
 class PatientPersonalInfo(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     age: Optional[int] = None
-
-_patient_personal_info = PatientPersonalInfo
 
 class PatientAppointment(BaseModel):
     appointment_datetime: Optional[datetime] = None
@@ -31,8 +27,6 @@ class PatientAppointment(BaseModel):
     appointment_status: Optional[str] = None
     appointment_status_id: Optional[int] = None
 
-_patient_appointment = PatientAppointment
-
 class PatientNote(BaseModel):
     note: Optional[str] = None
     note_id: Optional[int] = None
@@ -41,16 +35,15 @@ class PatientNote(BaseModel):
     note_reason_id: Optional[int] = None
     note_datetime: Optional[datetime] = None
 
-_patient_note = PatientNote
-
 class Patient(BaseModel):
     id: Optional[int] = None
     lastupdated: Optional[datetime] = None
-    PatientPersonalInfo: Optional[_patient_personal_info] = None
-    PatientContactInfo: Optional[_patient_contact_info] = None
-    PatientAppointment: Optional[_patient_appointment] = None
-    PatientNote: Optional[_patient_note] = None
+    personal_info: Optional[PatientPersonalInfo] = None
+    contact_info: Optional[PatientContactInfo] = None
+    appointment: Optional[PatientAppointment] = None
+    note: Optional[PatientNote] = None
 
 class PatientLogin(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
+    role: str = "patient"

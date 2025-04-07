@@ -1,3 +1,5 @@
 *.pyc
 context_config.json
 *test.py
+*.cpython-*
+my_app_backend/context/__pycache__/
