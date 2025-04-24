@@ -12,23 +12,20 @@ class DataBaseConfig:
         if 'supabase' in auth_config:
             self.database = SupabaseConfig(auth_config['supabase'])
 
-    def query(self, query: str, condition: str = None):
-        pass
+    def select(self, table_name: str, columns: list, condition: str = None):
+        self.logger.log(f"Selecting data from: {table_name}")
+        self.database.select(table_name, columns, condition)
 
-    def insert(self, query: str, data):
-        self.logger.log(f"Inserting data with query: {query}")
+    def insert(self, table_name: str, columns: list, data: list | dict | tuple):
+        self.logger.log(f"Inserting data into table: {table_name}")
         if data is None:
             raise ValueError("Data cannot be None")
         try:
-            if isinstance(data, pd.DataFrame):
-                data = data.to_dict(orient='records')
-            elif isinstance(data, dict):
-                data = [data]
-            elif isinstance(data, tuple):
+            if isinstance(data, tuple):
                 data = [value for value in data]
             else:
                 raise ValueError("Data must be a DataFrame or a dictionary")
-            self.database.insert(query, data)
+            self.database.insert(table_name, columns, data)
             self.logger.log("Data inserted successfully")
         except Exception as e:
             self.logger.log(f"Error inserting data: {e}", 'error')
