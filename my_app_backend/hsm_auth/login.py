@@ -14,8 +14,21 @@ class LoginHandler:
             raise ValueError(f"Failed to decode authentication: {e}")
 
     def _authenticate(self):
-        data_response = pd.read_csv('my_app_backend/auth/login.csv', header='infer')
-        record = data_response[(data_response['username'] == self.__username) & (data_response['role'] == self.__role)]
+        record = self.database.select(
+            "select password from user_authentication_table",
+            {
+                "and": [
+                    {
+                        "=":
+                        ["username", self.__username]
+                    },
+                    {
+                        "=":
+                        ["role", self.__role]
+                    }
+                ]
+            }
+        )
         if record.empty:
             return False, "Invalid username or role"
         if record.iloc[0]['password'] != self.__password:
