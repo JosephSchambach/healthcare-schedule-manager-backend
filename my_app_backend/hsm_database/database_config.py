@@ -14,7 +14,12 @@ class DataBaseConfig:
 
     def select(self, table_name: str, columns: list, condition: str = None):
         self.logger.log(f"Selecting data from: {table_name}")
-        self.database.select(table_name, columns, condition)
+        data = self.database.select(table_name, columns, condition)
+        if data.empty:
+            self.logger.log("No data found", 'warning')
+            return pd.DataFrame()
+        self.logger.log("Data selected successfully")
+        return data
 
     def insert(self, table_name: str, columns: list, data: list | dict | tuple):
         self.logger.log(f"Inserting data into table: {table_name}")

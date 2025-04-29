@@ -37,8 +37,20 @@ class SupabaseConfig:
             raise e
         
     def select(self, table_name: str, columns: str, condition: dict = None):
-        if table_name == 'user_authentication_table':
-            self.client.rpc('user_login')
+        query = self.client.table(table_name).select(columns)
+        if condition is not None:
+            query = self._condition_handler(query, condition)
+        try:
+            response = query.execute()
+            if response.data is None:
+                return pd.DataFrame()
+            if isinstance(response.data, list):
+                return pd.DataFrame(response.data)
+            else:
+                return pd.DataFrame([response.data])
+        except Exception as e:
+            print(f"Error selecting data: {e}")
+            raise e
             
 
     def _condition_parser(self, condition: str):

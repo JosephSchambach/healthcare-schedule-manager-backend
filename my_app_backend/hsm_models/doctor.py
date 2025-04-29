@@ -29,4 +29,4 @@ class Doctor(BaseModel):
 class DoctorLogin(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
-    role = "doctor"
+    role: Optional[str] = "doctor"

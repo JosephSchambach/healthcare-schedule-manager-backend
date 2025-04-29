@@ -15,7 +15,8 @@ class LoginHandler:
 
     def _authenticate(self):
         record = self.database.select(
-            "select password from user_authentication_table",
+            "user_authentication_table",
+            "*",
             {
                 "and": [
                     {
@@ -25,14 +26,16 @@ class LoginHandler:
                     {
                         "=":
                         ["role", self.__role]
+                    },
+                    {
+                        "=":
+                        ["password", self.__password]
                     }
                 ]
             }
         )
         if record.empty:
             return False, "Invalid username or role"
-        if record.iloc[0]['password'] != self.__password:
-            return False, "Invalid password"
         return True, "Authenticated successfully"
     
     def authenticate(self, auth):

@@ -46,4 +46,4 @@ class Patient(BaseModel):
 class PatientLogin(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
-    role: str = "patient"
+    role: Optional[str] = "patient"

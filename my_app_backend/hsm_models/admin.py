@@ -30,4 +30,4 @@ class Administrator(BaseModel):
 class AdministratorLogin(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
-    role = 'admin'
+    role: Optional[str] = 'admin'
