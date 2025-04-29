@@ -14,7 +14,7 @@ authorized = False
 def hello_world():
     return 'Hello, World!'
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/login', methods=['POST'])
 def login():
     headers = request.headers
     auth = headers.get('Authorization')
@@ -29,23 +29,32 @@ def login():
     response = {'statusCode': 200, 'message': 'success', 'sessionToken': session_token}
     return response
 
-@app.route('/api/create_user', methods=['POST'])
-def create_user():
-    data = request.get_json()
-    if not data:
-        return {'statusCode': 400, 'error': 'Invalid input'}
-    username = data.get('username')
-    password = data.get('password')
-    role = data.get('role')
-    if not username or not password or not role:
-        return {'statusCode': 400, 'error': 'Missing required fields'}
-    user_role = get_user_role(role, username, password)
-    status, message = context.login.create(user_role)
-    if not status:
-        return {'statusCode': 500, 'error': message}
-    return {'statusCode': 201, 'message': message}
+# @app.route('/api/create_user', methods=['POST'])
+# def create_user():
+#     data = request.get_json()
+#     if not data:
+#         return {'statusCode': 400, 'error': 'Invalid input'}
+#     username = data.get('username')
+#     password = data.get('password')
+#     role = data.get('role')
+#     if not username or not password or not role:
+#         return {'statusCode': 400, 'error': 'Missing required fields'}
+#     user_role = get_user_role(role, username, password)
+#     status, message = context.login.create(user_role)
+#     if not status:
+#         return {'statusCode': 500, 'error': message}
+#     return {'statusCode': 201, 'message': message}
 
-
+@app.route('/appointment', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def appointments():
+    if request.method == 'GET':
+        return {'statusCode': 200, 'message': 'GET request successful'}
+    elif request.method == 'POST':
+        return {'statusCode': 201, 'message': 'POST request successful'}
+    elif request.method == 'PUT':
+        return {'statusCode': 200, 'message': 'PUT request successful'}
+    elif request.method == 'DELETE':
+        return {'statusCode': 200, 'message': 'DELETE request successful'}
 
 if __name__ == '__main__':
     app.run(debug=True)
