@@ -9,23 +9,23 @@ class SupabaseConfig:
         self.service_role = auth_dict.get("supabase_service_role")
         self.client: Client = create_client(self.url, self.service_role)
         
-    def insert(self, table_name: str, columns: list, data: list | dict):
-        def _row_builder(columns, data):
-            rows = []
-            row = {}
-            if isinstance(data, dict):
-                data = list(data.values())
-            while len(data) > 0:
-                for i in range(len(columns)):
-                    if len(data) > 0:
-                        row[columns[i].strip()] = data[0]
-                        data = data[1:]
-                rows.append(row)
-            return rows
+    def _row_builder(self, columns, data):
+        rows = []
+        row = {}
+        if isinstance(data, dict):
+            data = list(data.values())
+        while len(data) > 0:
+            for i in range(len(columns)):
+                if len(data) > 0:
+                    row[columns[i].strip()] = data[0]
+                    data = data[1:]
+            rows.append(row)
+        return rows
         
+    def insert(self, table_name: str, columns: list, data: list | dict):
         insert_data = {}
         if len(columns) != len(data):
-            insert_data = _row_builder(columns, data)
+            insert_data = self._row_builder(columns, data)
         else:
             for i in range(len(columns)):
                 insert_data[columns[i].strip()] = data[i]
@@ -50,6 +50,23 @@ class SupabaseConfig:
                 return pd.DataFrame([response.data])
         except Exception as e:
             print(f"Error selecting data: {e}")
+            raise e
+        
+    def update(self, table_name: str, columns: list, data: list, condition: dict = None):
+        update_data = self._row_builder(columns, data)
+        query = self.client.table(table_name).update(update_data)
+        if condition is not None:
+            query = self._condition_handler(query, condition)
+        try:
+            response = query.execute()
+            if response.data is None:
+                return pd.DataFrame()
+            elif isinstance(response.data, list):
+                return pd.DataFrame(response.data)
+            else:
+                return pd.DataFrame([response.data])
+        except Exception as e:
+            print(f"Error updating data: {e}")
             raise e
             
 
@@ -89,11 +106,13 @@ class SupabaseConfig:
                     supabase = supabase.or_(or_string)
                 else:
                     column = value[0].strip()
-                    if len(value[1].split(",")) > 1:
+                    if isinstance(value[1], str) and len(value[1].split(",")) > 1:
                         value = value[1].split(",")
                         value = [v.strip() for v in value]
                     else:
-                        value = value[1].strip()
+                        value = value[1]
+                        if isinstance(value, str):
+                            value = value.strip()
                     if key == '=':
                         if is_or:
                             return f"{column}.eq.{value}"
