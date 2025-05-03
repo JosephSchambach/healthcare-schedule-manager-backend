@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Literal, Dict
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
@@ -17,15 +17,18 @@ class PatientPersonalInfo(BaseModel):
     age: Optional[int] = None
 
 class PatientAppointment(BaseModel):
-    appointment_datetime: Optional[datetime] = None
+    appointment_id: Optional[str] = None
+    appointment_date: Optional[str] = None
+    appointment_time: Optional[str] = None
     appointment_type: Optional[str] = None
     appointment_type_id: Optional[int] = None
     doctor_id: Optional[int] = None
     doctor_name: Optional[str] = None
-    doctor_specialization: Optional[str] = None
-    doctor_specialization_id: Optional[int] = None
     appointment_status: Optional[str] = None
     appointment_status_id: Optional[int] = None
+    notes: Optional[str] = None
+    patient_name: Optional[str] = None
+    patient_id: Optional[int] = None
 
 class PatientNote(BaseModel):
     note: Optional[str] = None
@@ -47,3 +50,10 @@ class PatientLogin(BaseModel):
     username: Optional[str] = None
     password: Optional[str] = None
     role: Optional[str] = "patient"
+
+class CreatePatientAppointment(BaseModel):
+    appointment: Optional[PatientAppointment] = None
+    
+class UpdatePatientAppointment(BaseModel):
+    condition: Optional[Dict] = None
+    values_to_update: Optional[Dict] = None

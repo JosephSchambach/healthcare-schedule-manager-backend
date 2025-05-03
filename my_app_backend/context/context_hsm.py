@@ -1,7 +1,8 @@
-from hsm_auth.login import LoginHandler
-from hsm_auth.session_manager import SessionManager
-from hsm_database.database_config import DataBaseConfig
-from context.hsm_logging_context import LoggingContext
+from my_app_backend.hsm_auth.login import LoginHandler
+from my_app_backend.hsm_auth.session_manager import SessionManager
+from my_app_backend.hsm_database.database_config import DataBaseConfig
+from my_app_backend.context.hsm_logging_context import LoggingContext
+from my_app_backend.hsm_methods.methods import Methods
 import json
 
 class ContextHSM:
@@ -11,6 +12,7 @@ class ContextHSM:
         self.get_context()
         self.get_secrets()
         self.get_database()
+        self.get_methods()
         self.login = LoginHandler(self.logger, self.database)
 
     def get_context(self):
@@ -37,3 +39,5 @@ class ContextHSM:
         else:
             raise ValueError("Database not found in secrets configuration")
 
+    def get_methods(self):
+        self.methods = Methods(self.logger, self.database)
