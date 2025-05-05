@@ -3,7 +3,7 @@ from flask_cors import CORS
 from waitress import serve
 from my_app_backend.context.context_hsm import ContextHSM 
 from my_app_backend.hsm_models.role_handler import get_user_role
-from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment
+from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment, UpdatePatientAppointment
 
 app = Flask(__name__)
 CORS(app)
@@ -87,7 +87,23 @@ def appointment():
         except Exception as e:
             return {'statusCode': 500, 'error': 'Failed to schedule appointment', 'message': str(e)}
     elif request.method == 'PUT':
-        return {'statusCode': 200, 'message': 'PUT request successful'}
+        try:
+            data = request.get_json()
+            if not data:
+                return {'statusCode': 400, 'error': 'Invalid input'}
+            appointment_id = data.get('appointment_id')
+            if not appointment_id:
+                return {'statusCode': 400, 'error': 'Missing appointment_id'}
+            update_data = data.get('update_data')
+            context.methods.update(
+                UpdatePatientAppointment(
+                    condition={"=": ['appointment_id', appointment_id]},
+                    values_to_update=update_data
+                )
+            )
+            return {'statusCode': 200, 'message': 'Successfully updated appointment', 'appointmentId': appointment_id}
+        except Exception as e:
+            return {'statusCode': 500, 'error': 'Failed to update appointment', 'message': str(e)}
     elif request.method == 'DELETE':
         return {'statusCode': 200, 'message': 'DELETE request successful'}
 
