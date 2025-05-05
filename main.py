@@ -2,7 +2,6 @@ from flask import Flask, request
 from flask_cors import CORS
 from waitress import serve
 from my_app_backend.context.context_hsm import ContextHSM 
-from my_app_backend.hsm_models.role_handler import get_user_role
 from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment, UpdatePatientAppointment
 
 app = Flask(__name__)
@@ -51,6 +50,11 @@ def appointment():
     if request.method == 'GET':
         return {'statusCode': 200, 'message': 'GET request successful'}
     elif request.method == 'POST':
+        """
+        
+                Create a new appointment. Requires patient_name, doctor_name, appointment_date, appointment_time, and appointment_type in the request body.
+                Responds with success or failure message and the appointment_id
+        """
         try:
             data = request.get_json()
             if not data: 
@@ -87,17 +91,30 @@ def appointment():
         except Exception as e:
             return {'statusCode': 500, 'error': 'Failed to schedule appointment', 'message': str(e)}
     elif request.method == 'PUT':
+        """
+        Update an existing appointment. Requires appointment_id, patient_id, and update_data in the request body.
+        Responds with success or failure message and the appointment_id
+        """
         try:
             data = request.get_json()
             if not data:
                 return {'statusCode': 400, 'error': 'Invalid input'}
             appointment_id = data.get('appointment_id')
+            patient_id = data.get('patient_id')
             if not appointment_id:
                 return {'statusCode': 400, 'error': 'Missing appointment_id'}
+            if not patient_id:
+                return {'statusCode': 400, 'error': 'Missing patient_id'}
             update_data = data.get('update_data')
             context.methods.update(
                 UpdatePatientAppointment(
-                    condition={"=": ['appointment_id', appointment_id]},
+                    condition={
+                            "and": [
+                                {"=": ["appointment_id", appointment_id]},
+                                {"=": ["patient_id", patient_id]}
+
+                            ]
+                        },
                     values_to_update=update_data
                 )
             )
