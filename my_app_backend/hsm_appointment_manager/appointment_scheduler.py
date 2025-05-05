@@ -26,3 +26,7 @@ class AppointmentScheduler:
             columns.append(key)
             values.append(value)
         return {"table": "appointments", "columns": columns, "values": values, "condition": condition, "context_method": context_method, "execution_method": execution_method}
+    
+    def cancel(self, attribute, context_method, execution_method):
+        condition = getattr(self, attribute)
+        return {"table": "appointments", "condition": condition, "context_method": context_method, "execution_method": execution_method}

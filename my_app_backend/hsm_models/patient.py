@@ -57,3 +57,6 @@ class CreatePatientAppointment(BaseModel):
 class UpdatePatientAppointment(BaseModel):
     condition: Optional[Dict] = None
     values_to_update: Optional[Dict] = None
+    
+class DeletePatientAppointment(BaseModel):
+    condition: Optional[Dict] = None

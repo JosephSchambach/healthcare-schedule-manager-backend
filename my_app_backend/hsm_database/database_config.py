@@ -46,3 +46,12 @@ class DataBaseConfig:
         except Exception as e:
             self.logger.log(f"Error updating data: {e}", 'error')
             raise e
+        
+    def delete(self, table_name: str, condition: str = None):
+        self.logger.log(f"Deleting data from table: {table_name}")
+        try:
+            self.database.delete(table_name, condition)
+            self.logger.log("Data deleted successfully")
+        except Exception as e:
+            self.logger.log(f"Error deleting data: {e}", 'error')
+            raise e

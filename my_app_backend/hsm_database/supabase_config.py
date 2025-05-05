@@ -68,8 +68,22 @@ class SupabaseConfig:
         except Exception as e:
             print(f"Error updating data: {e}")
             raise e
-            
 
+    def delete(self, table_name: str, condition: dict):
+        query = self.client.table(table_name).delete()
+        conditioned_query = self._condition_handler(query, condition)
+        try:
+            response = conditioned_query.execute()
+            if response.data is None:
+                return pd.DataFrame()
+            elif isinstance(response.data, list):
+                return pd.DataFrame(response.data)
+            else:
+                return pd.DataFrame([response.data])    
+        except Exception as e:
+            print(f"Error deleting data: {e}")
+            raise e
+        
     def _condition_parser(self, condition: str):
         """
             This would be a normal where clause in sql. 

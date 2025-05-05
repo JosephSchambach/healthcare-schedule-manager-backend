@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from waitress import serve
 from my_app_backend.context.context_hsm import ContextHSM 
-from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment, UpdatePatientAppointment
+from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment, UpdatePatientAppointment, DeletePatientAppointment
 
 app = Flask(__name__)
 CORS(app)
@@ -122,7 +122,33 @@ def appointment():
         except Exception as e:
             return {'statusCode': 500, 'error': 'Failed to update appointment', 'message': str(e)}
     elif request.method == 'DELETE':
-        return {'statusCode': 200, 'message': 'DELETE request successful'}
+        """
+        Delete an existing appointment. Requires appointment_id and patient_id in the request body.
+        """
+        try: 
+            data = request.get_json()
+            if not data:
+                return {'statusCode': 400, 'error': 'Invalid input'}
+            appointment_id = data.get('appointment_id')
+            patient_id = data.get('patient_id')
+            if not appointment_id:
+                return {'statusCode': 400, 'error': 'Missing appointment_id'}
+            if not patient_id:
+                return {'statusCode': 400, 'error': 'Missing patient_id'}
+            context.methods.delete(
+                DeletePatientAppointment(
+                    condition={
+                            "and": [
+                                {"=": ["appointment_id", appointment_id]},
+                                {"=": ["patient_id", patient_id]}
+
+                            ]
+                        }
+                )
+            )
+            return {'statusCode': 200, 'message': 'Successfully deleted appointment', 'appointmentId': appointment_id}
+        except Exception as e:
+            return {'statusCode': 500, 'error': 'Failed to update appointment', 'message': str(e)}
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -52,6 +52,20 @@ class Methods:
         delete_response = []
         if log: 
             self.logger.log(f"Deleting object of type {arg_type}")
+        if not isinstance(args, list):
+            args = [args]
+        for i, arg in enumerate(args):
+            self.logger.log(f"Processing {i + 1} {arg_type} objects")
+            kwargs = self.object_config[arg.__class__.__name__]
+            result = self._process(arg, kwargs, alert=alert)
+            if result is not None:
+                actor = getattr(self, result["context_method"])
+                action = getattr(actor, result["execution_method"])
+                action_response = action(result["table"], result["condition"])
+                delete_response.append(action_response)
+        if log:
+            self.logger.log(f"Deleted {len(delete_response)} objects of type {arg_type}")
+        return delete_response
 
     def lookup(self, args, log: bool =True, alert: bool = None):
         arg_type = type(args)
