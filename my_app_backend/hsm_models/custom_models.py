@@ -28,6 +28,14 @@ def get_obj_config():
                 "context_method": "database",
                 "execution_method": "update"
             }
+        },
+        "DeletePatientAppointment": {
+            "parent_method": appt_sched.AppointmentScheduler.cancel,
+            "kwargs": {
+                "attribute": "condition",
+                "context_method": "database",
+                "execution_method": "delete"
+            }
         }
     }
     return data
