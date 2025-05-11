@@ -1,4 +1,4 @@
-import my_app_backend.hsm_appointment_manager.appointment_scheduler as appt_sched
+import my_app_backend.hsm_appointment_manager.appointment_handler as appt_sched
 import my_app_backend.hsm_auth.registrar as reg
 import my_app_backend.hsm_models.patient as pat
 import my_app_backend.hsm_models.doctor as doc
@@ -7,7 +7,7 @@ import my_app_backend.hsm_models.admin as adm
 def get_obj_config():
     data = {
         "CreatePatientAppointment": {
-            "parent_method": appt_sched.AppointmentScheduler.schedule,
+            "parent_method": appt_sched.AppointmentHandler.schedule,
             "kwargs": {
                 "attribute": "appointment",
                 "context_method": "database",
@@ -20,8 +20,8 @@ def get_obj_config():
                 "registrar": pat.Patient
             }
         },
-        "UpdatePatientAppointment": {
-            "parent_method": appt_sched.AppointmentScheduler.reschedule,
+        "UpdatePatientAppointments": {
+            "parent_method": appt_sched.AppointmentHandler.reschedule,
             "kwargs": {
                 "attribute": "condition",
                 "update_data": "values_to_update",
@@ -30,11 +30,20 @@ def get_obj_config():
             }
         },
         "DeletePatientAppointment": {
-            "parent_method": appt_sched.AppointmentScheduler.cancel,
+            "parent_method": appt_sched.AppointmentHandler.cancel,
             "kwargs": {
                 "attribute": "condition",
                 "context_method": "database",
                 "execution_method": "delete"
+            }
+        },
+        "GetPatientAppointments": {
+            "parent_method": appt_sched.AppointmentHandler.get,
+            "kwargs": {
+                "attribute": "condition",
+                "data": "columns",
+                "context_method": "database",
+                "execution_method": "select"
             }
         }
     }

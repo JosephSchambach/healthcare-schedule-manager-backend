@@ -1,4 +1,4 @@
-from typing import Optional, Literal, Dict
+from typing import Optional, Literal, Dict, List
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
@@ -59,4 +59,8 @@ class UpdatePatientAppointment(BaseModel):
     values_to_update: Optional[Dict] = None
     
 class DeletePatientAppointment(BaseModel):
+    condition: Optional[Dict] = None
+    
+class GetPatientAppointments(BaseModel):
+    columns: Optional[List] = None
     condition: Optional[Dict] = None

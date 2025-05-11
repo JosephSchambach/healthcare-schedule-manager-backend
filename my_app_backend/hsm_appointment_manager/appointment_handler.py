@@ -3,7 +3,7 @@ from uuid import uuid4
 def _generate_id():
     return str(uuid4())
 
-class AppointmentScheduler:
+class AppointmentHandler:
     def __init__(self, database):
         self.database = database
         self.scheduled = False
@@ -30,3 +30,8 @@ class AppointmentScheduler:
     def cancel(self, attribute, context_method, execution_method):
         condition = getattr(self, attribute)
         return {"table": "appointments", "condition": condition, "context_method": context_method, "execution_method": execution_method}
+    
+    def get(self, attribute, data, context_method, execution_method):
+        condition = getattr(self, attribute)
+        columns = getattr(self, data)
+        return {"table": "appointments", "columns": columns, "condition": condition, "context_method": context_method, "execution_method": execution_method}

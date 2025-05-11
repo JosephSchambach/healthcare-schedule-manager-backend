@@ -2,7 +2,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from waitress import serve
 from my_app_backend.context.context_hsm import ContextHSM 
-from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment, UpdatePatientAppointment, DeletePatientAppointment
+from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment, UpdatePatientAppointment, DeletePatientAppointment, GetPatientAppointments
 
 app = Flask(__name__)
 CORS(app)
@@ -48,7 +48,33 @@ def login():
 @app.route('/appointment', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def appointment():
     if request.method == 'GET':
-        return {'statusCode': 200, 'message': 'GET request successful'}
+        """
+            Requires columns and a condition in the request body to filter the appointment details.
+            Returns appointment details in a json structure of rows and columns
+        """
+        try:
+            data = request.get_json()
+            if not data: 
+                return {'statusCode': 400, 'error': 'Invalid input'}
+            condition = data.get('condition')
+            if not condition:
+                return {'statusCode': 400, 'error': 'Missing condition'}
+            columns = data.get('columns')
+            if not columns:
+                columns = ["*"]
+            response_data = context.methods.get(
+                GetPatientAppointments(
+                    columns=columns,
+                    condition=condition
+                )
+            )   
+            df = response_data[0]
+            if df.empty:
+                return {'statusCode': 404, 'error': 'Appointment not found'}
+            json_data = df.to_json()
+            return {'statusCode': 200, 'message': 'GET request successful', 'data': json_data}
+        except Exception as e:
+            return {'statusCode': 500, 'error': 'Failed to retrieve appointment', 'message': str(e)}
     elif request.method == 'POST':
         """
         
