@@ -12,9 +12,10 @@ class DataBaseConfig:
         if 'supabase' in auth_config:
             self.database = SupabaseConfig(auth_config['supabase'])
 
-    def select(self, table_name: str, columns: list, condition: str = None):
+    def select(self, table_name: str, columns: list = ['*'], condition: str = None):
         self.logger.log(f"Selecting data from: {table_name}")
-        data = self.database.select(table_name, columns, condition)
+        str_columns = ', '.join(columns) if len(columns) > 1 else columns[0]
+        data = self.database.select(table_name, str_columns, condition)
         if data.empty:
             self.logger.log("No data found", 'warning')
             return pd.DataFrame()

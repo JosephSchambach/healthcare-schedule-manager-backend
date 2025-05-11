@@ -121,59 +121,68 @@ class SupabaseConfig:
                 else:
                     column = value[0].strip()
                     if isinstance(value[1], str) and len(value[1].split(",")) > 1:
-                        value = value[1].split(",")
-                        value = [v.strip() for v in value]
+                        val = value[1].split(",")
+                        val = [v.strip() for v in val]
                     else:
-                        value = value[1]
-                        if isinstance(value, str):
-                            value = value.strip()
+                        val = value[1]
+                        if isinstance(val, str):
+                            val = val.strip()
                     if key == '=':
                         if is_or:
-                            return f"{column}.eq.{value}"
+                            return f"{column}.eq.{val}"
                         else:
-                            return supabase.eq(column, value)
+                            supabase.negate_next = False
+                            supabase = supabase.eq(column, val)
                     elif key == '!=':
                         if is_or:
-                            return f"{column}.neq.{value}"
+                            return f"{column}.neq.{val}"
                         else:
-                            return supabase.neq(column, value)
+                            supabase.negate_next = False
+                            supabase = supabase.neq(column, val)
                     elif key == '>':
                         if is_or:
-                            return f"{column}.gt.{value}"
+                            return f"{column}.gt.{val}"
                         else:
-                            return supabase.gt(column, value)
+                            supabase.negate_next = False
+                            supabase = supabase.gt(column, val)
                     elif key == '<':
                         if is_or:
-                            return f"{column}.lt.{value}"
+                            return f"{column}.lt.{val}"
                         else:
-                            return supabase.lt(column, value)
+                            supabase.negate_next = False
+                            supabase = supabase.lt(column, val)
                     elif key == 'like':
                         if is_or:
-                            return f"{column}.ilike.{value}"
+                            return f"{column}.ilike.{val}"
                         else:
-                            return supabase.ilike(column, f"%{value}%")
+                            supabase.negate_next = False
+                            supabase = supabase.ilike(column, f"%{val}%")
                     elif key == 'in':
-                        value = ','.join(value)
+                        value = ','.join(val)
                         if is_or:
-                            return f"{column}.in.({value})"
+                            return f"{column}.in.({val})"
                         else:
-                            return supabase.in_(column, value)
+                            supabase.negate_next = False
+                            supabase = supabase.in_(column, val)
                     elif key == 'not in':
-                        value = ','.join(value)
+                        value = ','.join(val)
                         if is_or:
-                            return f"{column}.not.in.({value})"
+                            return f"{column}.not.in.({val})"
                         else:
-                            return supabase.not_.in_(column, f"({value})")
+                            supabase.negate_next = False
+                            supabase = supabase.not_.in_(column, f"({val})")
                     elif key == 'is':
                         if is_or:
-                            return f"{column}.is.{value}"
+                            return f"{column}.is.{val}"
                         else:
-                            return supabase.is_(column, value)
+                            supabase.negate_next = False
+                            supabase = supabase.is_(column, val)
                     elif key == 'is not':
                         if is_or:
-                            return f"{column}.is.not.{value}"
+                            return f"{column}.is.not.{val}"
                         else:
-                            return supabase.is_not(column, value)
+                            supabase.negate_next = False
+                            supabase = supabase.is_not(column, val)
                     else:
                         raise ValueError(f"Unsupported operator: {key}")
         return supabase
