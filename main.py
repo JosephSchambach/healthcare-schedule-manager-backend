@@ -3,6 +3,7 @@ from flask_cors import CORS
 from waitress import serve
 from my_app_backend.context.context_hsm import ContextHSM 
 from my_app_backend.hsm_models.patient import CreatePatientAppointment, PatientAppointment, UpdatePatientAppointment, DeletePatientAppointment, GetPatientAppointments
+import json
 
 app = Flask(__name__)
 CORS(app)
@@ -22,11 +23,11 @@ def login():
         return {'statusCode': 401, 'error': 'Authorization header is missing'}
     if auth[0:6] == "Basic ":
         auth = auth[6:]
-    autheticated, message = context.login.authenticate(auth)
+    autheticated, message, id = context.login.authenticate(auth)
     if not autheticated:
         return {'statusCode': 401, 'error': message}
     session_token = context.session_manager.create_session(auth)
-    response = {'statusCode': 200, 'message': 'success', 'sessionToken': session_token}
+    response = {'statusCode': 200, 'message': 'success', 'sessionToken': session_token, 'userId': id}
     return response
 
 # @app.route('/api/create_user', methods=['POST'])
@@ -85,16 +86,21 @@ def appointment():
             data = request.get_json()
             if not data: 
                 return {'statusCode': 400, 'error': 'Invalid input'}
-            patient_name = data.get('patient_name')
-            doctor_name = data.get('doctor_name')
-            patient_id = context.database.select('patients', ['patient_id'], {"=": ['patient_name', patient_name]})
-            doctor_id = context.database.select('doctors', ['doctor_id'], {"=": ['doctor_name', doctor_name]})
+            patient_id = int(data.get('patient_id'))
+            patient_name = context.database.select('patients', ['patient_name'], {"=": ['patient_id', patient_id]})
+            if patient_name.empty:
+                return {'statusCode': 404, 'error': 'Patient not found'}
+            patient_name = patient_name['patient_name'][0]
+            doctor = json.loads(data.get('doctor'))
+            doctor_name = doctor.get('name')
+            doctor_id = int(doctor.get('id'))
             appointment_date = data.get('appointment_date')
-            appointment_time = data.get('appointment_time')
-            appointment_type = data.get('appointment_type')
+            appointment_time = f"{data.get('appointment_time')}:00"
+            appointment_type = json.loads(data.get('appointment_type'))
+            appointment_type_id = appointment_type.get('id')
+            appointment_type_name = appointment_type.get('name')
+            notes = data.get('notes')
             appointment_status = 'scheduled'
-            patient_id = int(patient_id['patient_id'][0])
-            doctor_id = int(doctor_id['doctor_id'][0])
             context.methods.create(
                 CreatePatientAppointment(
                     appointment=PatientAppointment(
@@ -104,8 +110,10 @@ def appointment():
                         doctor_name=doctor_name,
                         appointment_date=appointment_date,
                         appointment_time=appointment_time,
-                        appointment_type=appointment_type,
-                        appointment_status=appointment_status
+                        appointment_type=appointment_type_name,
+                        appointment_type_id=appointment_type_id,
+                        appointment_status=appointment_status,
+                        notes=notes
                     )
                 )
             )

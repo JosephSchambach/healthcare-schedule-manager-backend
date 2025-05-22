@@ -36,7 +36,7 @@ class LoginHandler:
         )
         if record.empty:
             return False, "Invalid username or role"
-        return True, "Authenticated successfully"
+        return True, "Authenticated successfully", record.to_dict(orient='records')[0]['unique_id']
     
     def authenticate(self, auth):
         self.__auth = auth
