@@ -30,21 +30,28 @@ def login():
     response = {'statusCode': 200, 'message': 'success', 'sessionToken': session_token, 'userId': id}
     return response
 
-# @app.route('/api/create_user', methods=['POST'])
-# def create_user():
-#     data = request.get_json()
-#     if not data:
-#         return {'statusCode': 400, 'error': 'Invalid input'}
-#     username = data.get('username')
-#     password = data.get('password')
-#     role = data.get('role')
-#     if not username or not password or not role:
-#         return {'statusCode': 400, 'error': 'Missing required fields'}
-#     user_role = get_user_role(role, username, password)
-#     status, message = context.login.create(user_role)
-#     if not status:
-#         return {'statusCode': 500, 'error': message}
-#     return {'statusCode': 201, 'message': message}
+@app.route('/register', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    if not data:
+        return {'statusCode': 400, 'error': 'Invalid input'}
+    username = data.get('username')
+    password = data.get('password')
+    role = data.get('role')
+    first_name = data.get('firstName')
+    last_name = data.get('lastName')
+    if not username and not password and not role and not first_name and not last_name:
+        return {'statusCode': 400, 'error': 'Missing required fields'}
+    user_role = {
+        'username': username,
+        'password': password,
+        'role': role
+    }
+    name = f"{first_name} {last_name}"
+    status, message = context.login.create(user_role, name)
+    if not status:
+        return {'statusCode': 500, 'error': message}
+    return {'statusCode': 201, 'message': message}
 
 @app.route('/appointment', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def appointment():
