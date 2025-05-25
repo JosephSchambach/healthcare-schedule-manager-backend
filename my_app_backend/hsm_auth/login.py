@@ -51,17 +51,19 @@ class LoginHandler:
     def create(self, user_model, name):
         self.logger.log("Creating user authentication record")
         try:
-            self.database.insert(
-                'user_authentication_table', ['username', 'password', 'role'], 
-                (user_model['username'], user_model['password'], user_model['role'],)
-            )
-            self.logger.log("User authentication record created successfully")
             table_name = self.__table_maps.get(user_model['role'])[0]
             column_name = [self.__table_maps.get(user_model['role'])[1]]
             self.database.insert(
                 table_name, column_name,
                 (name,)
             )
+            self.logger.log("User record created successfully")
+            unique_id = int(self.database.select(table_name, [f"{user_model['role']}_id"], {"=": [self.__table_maps.get(user_model['role'])[1], name]})[f"{user_model['role']}_id"][0])
+            self.database.insert(
+                'user_authentication_table', ['username', 'password', 'role', 'unique_id'], 
+                (user_model['username'], user_model['password'], user_model['role'], unique_id)
+            )
+            self.logger.log("User authentication record created successfully")
             return True, "User authentication record created successfully"
         except Exception as e:
             self.logger.log(f"Failed to create user authentication record: {e}", level='error')
