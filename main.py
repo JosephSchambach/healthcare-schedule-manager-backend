@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, Response
 from flask_cors import CORS
 from waitress import serve
 from my_app_backend.context.context_hsm import ContextHSM 
@@ -61,12 +61,14 @@ def appointment():
             Returns appointment details in a json structure of rows and columns
         """
         try:
-            data = request.get_json()
+            data = request.args.to_dict()
             if not data: 
                 return {'statusCode': 400, 'error': 'Invalid input'}
             condition = data.get('condition')
             if not condition:
-                return {'statusCode': 400, 'error': 'Missing condition'}
+                role = data.get('role')
+                user_id = data.get('userID')
+                condition = {"=": [f"{role.lower()}_id", user_id]}
             columns = data.get('columns')
             if not columns:
                 columns = ["*"]
@@ -79,8 +81,8 @@ def appointment():
             df = response_data[0]
             if df.empty:
                 return {'statusCode': 404, 'error': 'Appointment not found'}
-            json_data = df.to_json()
-            return {'statusCode': 200, 'message': 'GET request successful', 'data': json_data}
+            json_data = df.to_json(orient='records')
+            return Response(json_data, mimetype='application/json')
         except Exception as e:
             return {'statusCode': 500, 'error': 'Failed to retrieve appointment', 'message': str(e)}
     elif request.method == 'POST':
@@ -141,7 +143,7 @@ def appointment():
             if not data:
                 return {'statusCode': 400, 'error': 'Invalid input'}
             appointment_id = data.get('appointment_id')
-            patient_id = data.get('patient_id')
+            patient_id = int(data.get('patient_id'))
             if not appointment_id:
                 return {'statusCode': 400, 'error': 'Missing appointment_id'}
             if not patient_id:

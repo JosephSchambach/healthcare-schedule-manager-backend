@@ -1,5 +1,5 @@
 import my_app_backend.hsm_appointment_manager.appointment_handler as appt_sched
-import my_app_backend.hsm_auth.registrar as reg
+# import my_app_backend.hsm_auth.registrar as reg
 import my_app_backend.hsm_models.patient as pat
 import my_app_backend.hsm_models.doctor as doc
 import my_app_backend.hsm_models.admin as adm
@@ -14,13 +14,13 @@ def get_obj_config():
                 "execution_method": "insert"
             }
         },
-        "CreatePatient": {
-            "parent_method": reg.Registrar.register,
-            "kwargs": {
-                "registrar": pat.Patient
-            }
-        },
-        "UpdatePatientAppointments": {
+        # "CreatePatient": {
+        #     "parent_method": reg.Registrar.register,
+        #     "kwargs": {
+        #         "registrar": pat.Patient
+        #     }
+        # },
+        "UpdatePatientAppointment": {
             "parent_method": appt_sched.AppointmentHandler.reschedule,
             "kwargs": {
                 "attribute": "condition",
