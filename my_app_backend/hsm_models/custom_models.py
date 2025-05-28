@@ -33,8 +33,9 @@ def get_obj_config():
             "parent_method": appt_sched.AppointmentHandler.cancel,
             "kwargs": {
                 "attribute": "condition",
+                "update_data": "appointment_status",
                 "context_method": "database",
-                "execution_method": "delete"
+                "execution_method": "update",
             }
         },
         "GetPatientAppointments": {

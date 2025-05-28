@@ -69,6 +69,15 @@ def appointment():
                 role = data.get('role')
                 user_id = data.get('userID')
                 condition = {"=": [f"{role.lower()}_id", user_id]}
+            status = data.get('appointment_status')
+            if status != '':
+                values = status.split(' ')
+                checker = values[0].strip()
+                status = values[1].strip()
+                if condition:
+                    condition = {"and": [condition, {checker: ["appointment_status", status]}]}
+                else:
+                    condition = {checker: ["appointment_status", status]}
             columns = data.get('columns')
             if not columns:
                 columns = ["*"]
@@ -178,7 +187,7 @@ def appointment():
                 return {'statusCode': 400, 'error': 'Missing appointment_id'}
             if not patient_id:
                 return {'statusCode': 400, 'error': 'Missing patient_id'}
-            context.methods.delete(
+            context.methods.update(
                 DeletePatientAppointment(
                     condition={
                             "and": [
@@ -186,7 +195,8 @@ def appointment():
                                 {"=": ["patient_id", patient_id]}
 
                             ]
-                        }
+                        },
+                    appointment_status='cancelled'
                 )
             )
             return {'statusCode': 200, 'message': 'Successfully deleted appointment', 'appointmentId': appointment_id}
