@@ -27,9 +27,10 @@ class AppointmentHandler:
             values.append(value)
         return {"table": "appointments", "columns": columns, "values": values, "condition": condition, "context_method": context_method, "execution_method": execution_method}
     
-    def cancel(self, attribute, context_method, execution_method):
+    def cancel(self, attribute, update_data, context_method, execution_method):
         condition = getattr(self, attribute)
-        return {"table": "appointments", "condition": condition, "context_method": context_method, "execution_method": execution_method}
+        update_value = getattr(self, update_data)
+        return {"table": "appointments", "columns": update_data, "values": update_value, "condition": condition, "context_method": context_method, "execution_method": execution_method}
     
     def get(self, attribute, data, context_method, execution_method):
         condition = getattr(self, attribute)

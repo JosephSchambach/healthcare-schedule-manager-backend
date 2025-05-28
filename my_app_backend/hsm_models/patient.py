@@ -60,6 +60,7 @@ class UpdatePatientAppointment(BaseModel):
     
 class DeletePatientAppointment(BaseModel):
     condition: Optional[Dict] = None
+    appointment_status: Optional[Literal['cancelled']] = 'cancelled'
     
 class GetPatientAppointments(BaseModel):
     columns: Optional[List] = None

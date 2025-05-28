@@ -42,6 +42,10 @@ class DataBaseConfig:
         if not data:
             raise ValueError("Data cannot be empty")
         try:
+            if not isinstance(columns, list):
+                columns = [columns]
+            if not isinstance(data, list):
+                data = [data]
             self.database.update(table_name, columns, data, condition)
             self.logger.log("Data updated successfully")
         except Exception as e:
